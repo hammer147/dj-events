@@ -23,7 +23,7 @@ const EventsPage: NextPage<Props> = ({ events }) => {
 
 export const getStaticProps: GetStaticProps = async () => {
 
-  // this is not recommended
+  // it is not recommended to call fetch() to call an API route, we will change this
   const response = await fetch(`${API_URL}/api/events`)
   const events = await response.json() as EventType[]
 

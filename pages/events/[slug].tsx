@@ -65,6 +65,7 @@ const EventPage: NextPage<Props> = ({ evt }) => {
 export const getStaticProps: GetStaticProps = async context => {
   const { slug } = context.params!
 
+  // it is not recommended to call fetch() to call an API route, we will change this
   const response = await fetch(`${API_URL}/api/events/${slug}`)
   const events = await response.json() as EventType[] // arr with 1 element
 

@@ -3,11 +3,11 @@ import React from 'react'
 import EventItem from '../components/events/event-item'
 import Layout from '../components/layout/layout'
 import { API_URL } from '../config'
-import { EventType } from '../typings'
+import { IEvent } from '../typings'
 import Link from 'next/link'
 
 type Props = {
-  events: EventType[]
+  events: IEvent[]
 }
 
 const HomePage: NextPage<Props> = ({ events }) => {
@@ -29,12 +29,11 @@ const HomePage: NextPage<Props> = ({ events }) => {
 
 export const getStaticProps: GetStaticProps = async () => {
 
-  // this is not recommended
-  const response = await fetch(`${API_URL}/api/events`)
-  const events = await response.json() as EventType[]
+  const response = await fetch(`${API_URL}/events?_sort=date:ASC&_limit=3`)
+  const events = await response.json() as IEvent[]
 
   return {
-    props: { events: events.slice(0, 3) },
+    props: { events },
     revalidate: 10
   }
 }

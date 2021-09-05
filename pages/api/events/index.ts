@@ -1,11 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { EventType } from '../../../typings'
+import { IEvent } from '../../../typings'
 
-const { events } = require('../../../data/data.json') as { events: EventType[] }
+const { events } = require('../../../data/data.json') as { events: IEvent[] }
 
 type Data = {
   message: string
-} | EventType[]
+} | IEvent[]
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
   if (req.method === 'GET') {

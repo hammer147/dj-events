@@ -3,10 +3,10 @@ import React from 'react'
 import EventItem from '../../components/events/event-item'
 import Layout from '../../components/layout/layout'
 import { API_URL } from '../../config'
-import { EventType } from '../../typings'
+import { IEvent } from '../../typings'
 
 type Props = {
-  events: EventType[]
+  events: IEvent[]
 }
 
 const EventsPage: NextPage<Props> = ({ events }) => {
@@ -15,7 +15,7 @@ const EventsPage: NextPage<Props> = ({ events }) => {
       <h1>Events</h1>
       {events.length === 0 && <h3>No Events to show</h3>}
       {events.map(evt => (
-        <EventItem key={evt.id} evt={evt}/>
+        <EventItem key={evt.id} evt={evt} />
       ))}
     </Layout>
   )
@@ -23,9 +23,8 @@ const EventsPage: NextPage<Props> = ({ events }) => {
 
 export const getStaticProps: GetStaticProps = async () => {
 
-  // it is not recommended to call fetch() to call an API route, we will change this
-  const response = await fetch(`${API_URL}/api/events`)
-  const events = await response.json() as EventType[]
+  const response = await fetch(`${API_URL}/events?_sort=date:ASC`)
+  const events = await response.json() as IEvent[]
 
   return {
     props: { events },

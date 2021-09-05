@@ -1,7 +1,7 @@
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next'
 import Layout from '../../components/layout/layout'
 import { API_URL } from '../../config'
-import { EventType } from '../../typings'
+import { IEvent } from '../../typings'
 import styles from './[slug].module.css'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -9,7 +9,7 @@ import { FaPencilAlt, FaTimes } from 'react-icons/fa'
 import { MouseEventHandler } from 'react'
 
 type Props = {
-  evt: EventType
+  evt: IEvent
 }
 
 const deleteEvent: MouseEventHandler<HTMLAnchorElement> = e => {
@@ -32,13 +32,13 @@ const EventPage: NextPage<Props> = ({ evt }) => {
           </a>
         </div>
 
-        <span>{evt.date} at {evt.time}</span>
+        <span>{new Date(evt.date).toLocaleDateString('en-GB')} at {evt.time}</span>
 
         <h1>{evt.name}</h1>
 
         {evt.image && (
           <div className={styles.image}>
-            <Image src={evt.image} alt={evt.name} width={960} height={600}/>
+            <Image src={evt.image.formats.medium.url} alt={evt.name} width={960} height={600} />
           </div>
         )}
 
@@ -65,9 +65,8 @@ const EventPage: NextPage<Props> = ({ evt }) => {
 export const getStaticProps: GetStaticProps = async context => {
   const { slug } = context.params!
 
-  // it is not recommended to call fetch() to call an API route, we will change this
-  const response = await fetch(`${API_URL}/api/events/${slug}`)
-  const events = await response.json() as EventType[] // arr with 1 element
+  const response = await fetch(`${API_URL}/events?slug=${slug}`)
+  const events = await response.json() as IEvent[]
 
   return {
     props: { evt: events[0] },
@@ -76,8 +75,10 @@ export const getStaticProps: GetStaticProps = async context => {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const response = await fetch(`${API_URL}/api/events`)
-  const events = await response.json() as EventType[]
+
+  const response = await fetch(`${API_URL}/events`)
+  const events = await response.json() as IEvent[]
+
   const paths = events.map(evt => ({ params: { slug: evt.slug } }))
 
   return {

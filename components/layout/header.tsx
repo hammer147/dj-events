@@ -1,5 +1,7 @@
 import styles from './header.module.css'
 import Link from 'next/link'
+import React from 'react'
+import Search from './search'
 
 const Header = () => {
   return (
@@ -9,6 +11,7 @@ const Header = () => {
           <a>DJ Events</a>
         </Link>
       </div>
+      <Search />
       <nav>
         <ul>
           <li>

@@ -10,7 +10,7 @@ import { API_URL } from '../../config'
 import { IEvent } from '../../typings'
 
 const AddEventPage: NextPage = () => {
-  const [values, setValues] = useState({
+  const [values, setValues] = useState<Partial<IEvent>>({
     name: '',
     performers: '',
     venue: '',

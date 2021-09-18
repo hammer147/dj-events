@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useState } from 'react'
+import React, { ChangeEvent, FormEvent, useState } from 'react'
 import { GetServerSideProps, NextPage } from 'next'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
@@ -10,6 +10,7 @@ import Layout from '../../../components/layout/layout'
 import { API_URL } from '../../../config'
 import { IEvent } from '../../../typings'
 import styles from './[id].module.css'
+import Modal from '../../../components/modal'
 
 type Props = {
   evt: IEvent
@@ -26,6 +27,7 @@ const EditEventPage: NextPage<Props> = ({ evt }) => {
     description: evt.description
   })
   const [imagePreview, setImagePreview] = useState(evt.image ? evt.image.formats.thumbnail.url : null)
+  const [showModal, setShowModal] = useState(false)
 
   const router = useRouter()
 
@@ -142,11 +144,16 @@ const EditEventPage: NextPage<Props> = ({ evt }) => {
         <div>
           <p>No image uploaded</p>
         </div>)}
+
       <div>
-        <button className="btn-secondary">
+        <button className="btn-secondary" onClick={() => setShowModal(true)}>
           <FaImage /> Set Image
         </button>
       </div>
+
+      <Modal show={showModal} onClose={() => setShowModal(false)}>
+        IMAGE UPLOAD
+      </Modal>
     </Layout>
   )
 }

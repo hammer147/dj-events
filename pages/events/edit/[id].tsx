@@ -11,6 +11,7 @@ import { API_URL } from '../../../config'
 import { IEvent } from '../../../typings'
 import styles from './[id].module.css'
 import Modal from '../../../components/modal'
+import ImageUpload from '../../../components/image-upload'
 
 type Props = {
   evt: IEvent
@@ -55,6 +56,13 @@ const EditEventPage: NextPage<Props> = ({ evt }) => {
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setValues({ ...values, [name]: value })
+  }
+
+  const imageUploaded = async () => {
+    const response = await fetch(`${API_URL}/events/${evt.id}`)
+    const data = await response.json() as IEvent
+    setImagePreview(data.image.formats.thumbnail.url)
+    setShowModal(false)
   }
 
   return (
@@ -152,7 +160,7 @@ const EditEventPage: NextPage<Props> = ({ evt }) => {
       </div>
 
       <Modal show={showModal} onClose={() => setShowModal(false)}>
-        IMAGE UPLOAD
+        <ImageUpload evtId={evt.id} imageUploaded={imageUploaded}/>
       </Modal>
     </Layout>
   )

@@ -5,15 +5,18 @@ import 'react-toastify/dist/ReactToastify.css'
 import { FaUser } from 'react-icons/fa'
 import Layout from '../../components/layout/layout'
 import styles from './login.module.css'
-import { FormEventHandler, useState } from 'react'
+import { FormEventHandler, useContext, useState } from 'react'
+import AuthContext from '../../context/auth-context'
 
 const LoginPage: NextPage = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
+  const { login, error } = useContext(AuthContext)
+
   const handleSubmit: FormEventHandler = e => {
     e.preventDefault()
-    console.log({ email, password })
+    login({ email, password })
   }
 
   return (

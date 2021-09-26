@@ -14,14 +14,15 @@ export interface IEvent {
   updated_at: string
   image: Image
 }
-interface User {
+export interface User {
   id: number
   username: string
   email: string
   provider: string
   confirmed: boolean
   blocked: boolean
-  role: number
+  role: Role
+  events: IEvent[]
   created_at: string
   updated_at: string
 }
@@ -65,4 +66,10 @@ interface ThumbnailOrLargeOrMediumOrSmall {
 interface ProviderMetadata {
   public_id: string
   resource_type: string
+}
+interface Role {
+  description: string
+  id: number
+  name: string
+  type: string
 }

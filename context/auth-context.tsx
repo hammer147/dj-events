@@ -1,4 +1,11 @@
 import { createContext, ReactNode, useState } from 'react'
+import { NEXT_URL } from '../config'
+import { User } from '../typings'
+
+type Data = {
+  user?: User
+  message?: string
+}
 
 type LoginObj = {
   email: string
@@ -12,8 +19,8 @@ type RegisterObj = {
 }
 
 type AuthContextType = {
-  user: any
-  error: any
+  user: User | null
+  error: string
   register: (registerObj: RegisterObj) => Promise<void>
   login: (loginObj: LoginObj) => Promise<void>
   logout: () => Promise<void>
@@ -26,8 +33,8 @@ type Props = {
 }
 
 export const AuthProvider = ({ children }: Props) => {
-  const [user, setUser] = useState(null)
-  const [error, setError] = useState(null)
+  const [user, setUser] = useState<User | null>(null)
+  const [error, setError] = useState('')
 
   // Register user
   const register = async (registerObj: RegisterObj) => {
@@ -37,7 +44,22 @@ export const AuthProvider = ({ children }: Props) => {
   // Login user
   const login = async (loginObj: LoginObj) => {
     const { email: identifier, password } = loginObj
-    console.log({identifier, password})
+    const response = await fetch(`${NEXT_URL}/api/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ identifier, password })
+    })
+    const data = await response.json() as Data
+
+    console.log(data)
+
+    if (response.ok) {
+      setUser(data.user!)
+    } else {
+      setError(data.message!)
+      setError('')
+    }
+
   }
 
   // Logout user

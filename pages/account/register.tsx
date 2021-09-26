@@ -47,7 +47,6 @@ const RegisterPage: NextPage = () => {
             <label htmlFor="passwordConfirm">Confirm Password</label>
             <input type="password" id="passwordConfirm" value={passwordConfirm} onChange={e => setPasswordConfirm(e.target.value)} />
           </div>
-
           <input type="submit" value="Login" className="btn" />
         </form>
         <p>Already have an account?<Link href="/account/login"> Login</Link></p>

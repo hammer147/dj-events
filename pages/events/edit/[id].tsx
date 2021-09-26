@@ -171,6 +171,8 @@ export const getServerSideProps: GetServerSideProps = async context => {
   const response = await fetch(`${API_URL}/events/${id}`)
   const evt = await response.json() as IEvent
 
+  console.log(context.req.headers.cookie)
+
   return {
     props: {
       evt

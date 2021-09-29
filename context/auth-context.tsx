@@ -1,4 +1,5 @@
-import { createContext, ReactNode, useState } from 'react'
+import { useRouter } from 'next/router'
+import { createContext, ReactNode, useEffect, useState } from 'react'
 import { NEXT_URL } from '../config'
 import { User } from '../typings'
 
@@ -36,6 +37,12 @@ export const AuthProvider = ({ children }: Props) => {
   const [user, setUser] = useState<User | null>(null)
   const [error, setError] = useState('')
 
+  useEffect(() => {
+    checkUserLoggedIn()
+  }, [])
+
+  const router = useRouter()
+  
   // Register user
   const register = async (registerObj: RegisterObj) => {
     console.log(registerObj)
@@ -50,16 +57,13 @@ export const AuthProvider = ({ children }: Props) => {
       body: JSON.stringify({ identifier, password })
     })
     const data = await response.json() as Data
-
-    console.log(data)
-
     if (response.ok) {
       setUser(data.user!)
+      
     } else {
       setError(data.message!)
       setError('')
     }
-
   }
 
   // Logout user
@@ -68,8 +72,14 @@ export const AuthProvider = ({ children }: Props) => {
   }
 
   // check if user is logged in
-  const checkUserLoggedIn = async (user: any) => {
-    console.log('Check')
+  const checkUserLoggedIn = async () => {
+    const response = await fetch(`${NEXT_URL}/api/user`)
+    const data = await response.json()
+    if (response.ok) {
+      setUser(data.user)
+    } else {
+      setUser(null)
+    }
   }
 
   return (

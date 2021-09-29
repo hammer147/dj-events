@@ -45,11 +45,10 @@ export const AuthProvider = ({ children }: Props) => {
 
   // Register user
   const register = async (registerObj: RegisterObj) => {
-    const { username, email, password } = registerObj
     const response = await fetch(`${NEXT_URL}/api/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, email, password })
+      body: JSON.stringify(registerObj)
     })
     const data = await response.json() as Data
     if (response.ok) {

@@ -5,7 +5,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import { FaUser } from 'react-icons/fa'
 import Layout from '../../components/layout/layout'
 import styles from './register.module.css'
-import { FormEventHandler, useContext, useState } from 'react'
+import { FormEventHandler, useContext, useEffect, useState } from 'react'
 import AuthContext from '../../context/auth-context'
 
 const RegisterPage: NextPage = () => {
@@ -15,6 +15,10 @@ const RegisterPage: NextPage = () => {
   const [passwordConfirm, setPasswordConfirm] = useState('')
 
   const { register, error } = useContext(AuthContext)
+
+  useEffect(() => {
+    error && toast.error(error)
+  })
 
   const handleSubmit: FormEventHandler = e => {
     e.preventDefault()
@@ -47,7 +51,7 @@ const RegisterPage: NextPage = () => {
             <label htmlFor="passwordConfirm">Confirm Password</label>
             <input type="password" id="passwordConfirm" value={passwordConfirm} onChange={e => setPasswordConfirm(e.target.value)} />
           </div>
-          <input type="submit" value="Login" className="btn" />
+          <input type="submit" value="Register" className="btn" />
         </form>
         <p>Already have an account?<Link href="/account/login"> Login</Link></p>
       </div>

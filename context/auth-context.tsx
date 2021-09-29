@@ -59,7 +59,7 @@ export const AuthProvider = ({ children }: Props) => {
     const data = await response.json() as Data
     if (response.ok) {
       setUser(data.user!)
-      
+      router.push('/account/dashboard')
     } else {
       setError(data.message!)
       setError('')

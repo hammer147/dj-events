@@ -92,9 +92,9 @@ export const AuthProvider = ({ children }: Props) => {
   // check if user is logged in
   const checkUserLoggedIn = async () => {
     const response = await fetch(`${NEXT_URL}/api/user`)
-    const data = await response.json()
+    const data = await response.json() as Data
     if (response.ok) {
-      setUser(data.user)
+      setUser(data.user!)
     } else {
       setUser(null)
     }

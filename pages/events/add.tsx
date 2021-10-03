@@ -1,4 +1,4 @@
-import { NextPage } from 'next'
+import { GetServerSideProps, NextPage } from 'next'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { ChangeEvent, FormEvent, useState } from 'react'
@@ -8,8 +8,13 @@ import Layout from '../../components/layout/layout'
 import styles from './add.module.css'
 import { API_URL } from '../../config'
 import { IEvent } from '../../typings'
+import { parseCookies } from '../../helpers'
 
-const AddEventPage: NextPage = () => {
+type Props = {
+  token: string
+}
+
+const AddEventPage: NextPage<Props> = ({ token }) => {
   const [values, setValues] = useState<Partial<IEvent>>({
     name: '',
     performers: '',
@@ -32,12 +37,16 @@ const AddEventPage: NextPage = () => {
     const response = await fetch(`${API_URL}/events`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        authorization: `Bearer ${token}`
       },
       body: JSON.stringify(values)
     })
 
-    if (!response.ok) return toast.error('Something Went Wrong')
+    if (!response.ok) {
+      if (response.status === 403) return toast.error('No token included')
+      return toast.error('Something Went Wrong')
+    }
 
     const evt = await response.json() as IEvent
     router.push(`/events/${evt.slug}`)
@@ -130,6 +139,13 @@ const AddEventPage: NextPage = () => {
       </form>
     </Layout>
   )
+}
+
+export const getServerSideProps: GetServerSideProps = async context => {
+  const { token } = parseCookies(context)
+  return {
+    props: { token }
+  }
 }
 
 export default AddEventPage

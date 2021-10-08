@@ -5,19 +5,36 @@ import { parseCookies } from '../../helpers'
 import { IEvent } from '../../typings'
 import styles from './dashboard.module.css'
 import DashboardEvent from '../../components/dashboard-event'
+import { MouseEventHandler } from 'react'
+import { useRouter } from 'next/router'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 type Props = {
-  events: IEvent[]
+  events: IEvent[],
+  token: string
 }
 
-const DashboardPage: NextPage<Props> = ({ events }) => {
+const DashboardPage: NextPage<Props> = ({ events, token }) => {
 
-  const deleteEvent = (id: number) => {
-    console.log(id)
+  const router = useRouter()
+
+  const deleteEvent = async (id: number) => {
+    if (!confirm('Are you sure you want to delete')) return
+    const response = await fetch(`${API_URL}/events/${id}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    const data = await response.json()
+    if (!response.ok) return toast.error(data.message)
+    router.push('/events/')
   }
 
   return (
     <Layout title="User Dashboard">
+      <ToastContainer />
       <div className={styles.dash}>
         <h1>Dashboard</h1>
         <h3>My Events</h3>
@@ -43,7 +60,7 @@ export const getServerSideProps: GetServerSideProps = async context => {
   const events = await response.json()
 
   return {
-    props: { events }
+    props: { events, token }
   }
 }
 

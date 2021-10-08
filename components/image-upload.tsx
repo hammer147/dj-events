@@ -5,9 +5,10 @@ import styles from './image-upload.module.css'
 type Props = {
   evtId: number
   imageUploaded: () => Promise<void>
+  token: string
 }
 
-const ImageUpload = ({ evtId, imageUploaded }: Props) => {
+const ImageUpload = ({ evtId, imageUploaded, token }: Props) => {
 
   const [image, setImage] = useState<File | null>(null)
 
@@ -24,6 +25,9 @@ const ImageUpload = ({ evtId, imageUploaded }: Props) => {
 
     const response = await fetch(`${API_URL}/upload`, {
       method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
       body: formData
     })
 

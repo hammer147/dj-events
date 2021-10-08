@@ -12,12 +12,14 @@ import { IEvent } from '../../../typings'
 import styles from './[id].module.css'
 import Modal from '../../../components/modal'
 import ImageUpload from '../../../components/image-upload'
+import { parseCookies } from '../../../helpers'
 
 type Props = {
-  evt: IEvent
+  evt: IEvent,
+  token: string
 }
 
-const EditEventPage: NextPage<Props> = ({ evt }) => {
+const EditEventPage: NextPage<Props> = ({ evt, token }) => {
   const [values, setValues] = useState<Partial<IEvent>>({
     name: evt.name,
     performers: evt.performers,
@@ -42,12 +44,16 @@ const EditEventPage: NextPage<Props> = ({ evt }) => {
     const response = await fetch(`${API_URL}/events/${evt.id}`, {
       method: 'PUT',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
       },
       body: JSON.stringify(values)
     })
 
-    if (!response.ok) return toast.error('Something Went Wrong')
+    if (!response.ok) {
+      if (response.status === 403) return toast.error('Unauthorized')
+      return toast.error('Something Went Wrong')
+    }
 
     const updatedEvent = await response.json() as IEvent
     router.push(`/events/${updatedEvent.slug}`)
@@ -160,22 +166,26 @@ const EditEventPage: NextPage<Props> = ({ evt }) => {
       </div>
 
       <Modal show={showModal} onClose={() => setShowModal(false)}>
-        <ImageUpload evtId={evt.id} imageUploaded={imageUploaded}/>
+        <ImageUpload 
+          evtId={evt.id} 
+          imageUploaded={imageUploaded} 
+          token={token}
+        />
       </Modal>
     </Layout>
   )
 }
 
 export const getServerSideProps: GetServerSideProps = async context => {
+  const {token} = parseCookies(context)
   const { id } = context.query
   const response = await fetch(`${API_URL}/events/${id}`)
   const evt = await response.json() as IEvent
 
-  console.log(context.req.headers.cookie)
-
   return {
     props: {
-      evt
+      evt,
+      token
     }
   }
 }
